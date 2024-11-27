@@ -1,0 +1,15 @@
+﻿@model BookNest.Models.Book
+
+<h2>Add Book</h2>
+
+<form asp-action="AddBook" method="post">
+    <div class="form-group">
+        <label for="Title">Title</label>
+        <input type="text" class="form-control" id="Title" name="Title">
+    </div>
+    <div class="form-group">
+        <label for="Author">Author</label>
+        <input type="text" class="form-control" id="Author" name="Author">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Book</button>
+</form>

@@ -1,6 +1,54 @@
-﻿@{
-    ViewData["Title"] = "Admin Dashboard";
-}
+﻿@model BookNest.ViewModels.AdminDashboardViewModel
 
 <h1>Admin Dashboard</h1>
-<p>Welcome to the admin dashboard!</p>
+
+<h3>Users</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Add/Modify Books</h3>
+<form asp-action="AddBook" method="post">
+    <div class="form-group">
+        <label for="Title">Title</label>
+        <input type="text" class="form-control" id="Title" name="Title">
+    </div>
+    <div class="form-group">
+        <label for="Author">Author</label>
+        <input type="text" class="form-control" id="Author" name="Author">
+    </div>
+    <button type="submit" class="btn btn-primary">Add Book</button>
+</form>
+
+<h3>Books</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model.Books)
+        {
+            <tr>
+                <td>@book.Title</td>
+                <td>@book.Author</td>
+            </tr>
+        }
+    </tbody>
+</table>
