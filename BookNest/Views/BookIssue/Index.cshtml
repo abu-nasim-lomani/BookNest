@@ -1,0 +1,35 @@
+﻿@model IEnumerable<BookNest.Models.BookIssue>
+
+<h2>Book Issues</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book Title</th>
+            <th>User Email</th>
+            <th>Issue Date</th>
+            <th>Return Date</th>
+            <th>Is Returned</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var bookIssue in Model)
+        {
+            <tr>
+                <td>@bookIssue.Book.Title</td>
+                <td>@bookIssue.User.Email</td>
+                <td>@bookIssue.IssueDate.ToShortDateString()</td>
+                <td>@bookIssue.ReturnDate.ToShortDateString()</td>
+                <td>@bookIssue.IsReturned</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@bookIssue.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@bookIssue.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@bookIssue.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create">Issue New Book</a>

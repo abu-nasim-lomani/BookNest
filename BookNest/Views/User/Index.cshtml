@@ -1,0 +1,25 @@
+﻿@model IEnumerable<BookNest.Models.User>
+
+<h2>Users</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+                <td>
+                    <!-- Edit/Delete buttons can be added here -->
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

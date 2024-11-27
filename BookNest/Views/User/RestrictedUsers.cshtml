@@ -1,0 +1,28 @@
+﻿@model IEnumerable<BookNest.Models.User>
+
+<h2>Restricted Users</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>
+                    <form asp-action="LiftRestriction" method="post">
+                        <input type="hidden" name="id" value="@user.Id" />
+                        <input type="submit" value="Lift Restriction" class="btn btn-primary" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index">Back to All Users</a>
