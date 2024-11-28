@@ -1,0 +1,49 @@
+﻿@model IEnumerable<BookNest.Models.UserIssueViewModel>
+
+<div class="container mt-5">
+    <h2>User Book Issues</h2>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>User Name</th>
+                <th>Book Issues</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var userIssue in Model)
+            {
+                <tr class="@(userIssue.BookIssues.Any(bi => bi.IsExpired) ? "table-danger" : "")">
+                    <td>@userIssue.UserName</td>
+                    <td>
+                        <ul>
+                            @foreach (var bookIssue in userIssue.BookIssues)
+                            {
+                                <li>@bookIssue.BookTitle - Issued: @bookIssue.IssueDate.ToShortDateString(), Due: @bookIssue.DueDate.ToShortDateString() @if (bookIssue.IsExpired)
+                                    {
+                                        <span class="text-danger">(Expired)</span>
+                                    }</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        @if (userIssue.BookIssues.Any(bi => bi.IsExpired))
+                        {
+                            <form asp-action="RestrictUser" method="post" style="display:inline;">
+                                <input type="hidden" name="userId" value="@userIssue.UserId" />
+                                <button type="submit" class="btn btn-warning">Restrict</button>
+                            </form>
+                        }
+                        @if (userIssue.IsRestricted && !userIssue.BookIssues.Any(bi => bi.IsExpired))
+                        {
+                            <form asp-action="UnrestrictUser" method="post" style="display:inline;">
+                                <input type="hidden" name="userId" value="@userIssue.UserId" />
+                                <button type="submit" class="btn btn-success">Unrestrict</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

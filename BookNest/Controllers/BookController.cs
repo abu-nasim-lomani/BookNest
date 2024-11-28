@@ -57,46 +57,15 @@ namespace BookNest.Controllers
         [HttpPost]
         public IActionResult DeleteBook(int bookId)
         {
+            var book = _bookRepository.GetBookById(bookId);
+            if (book == null)
+            {
+                return BadRequest("Book does not exist.");
+            }
+
             _bookRepository.DeleteBook(bookId);
             TempData["SuccessMessage"] = "Book deleted successfully!";
             return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public IActionResult RequestIssue(int bookId, DateTime returnDate)
-        {
-            var book = _bookRepository.GetBookById(bookId);
-            if (book == null || book.Quantity <= 0)
-            {
-                return BadRequest("Book not available or does not exist.");
-            }
-
-            var userId = _userRepository.GetAllUsers().FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id;
-            if (userId == null)
-            {
-                return BadRequest("User does not exist.");
-            }
-
-            // চেক করা যে ব্যবহারকারীর কাছে কোনো ইস্যু করা বই আছে কিনা যা ফেরত করা হয়নি
-            var userIssues = _bookIssueRepository.GetAllBookIssues().Where(bi => bi.UserId == userId && !bi.IsReturned);
-            if (userIssues.Any())
-            {
-                return BadRequest("Please return your previous book before issuing a new one.");
-            }
-
-            var request = new BookIssueRequest
-            {
-                BookId = bookId,
-                UserId = userId,
-                RequestDate = DateTime.Now,
-                ReturnDate = returnDate,
-                IsApproved = false,
-                IsPending = true
-            };
-
-            _bookIssueRequestRepository.AddRequest(request);
-
-            return Ok();
         }
     }
 }

@@ -46,11 +46,11 @@ namespace BookNest.Controllers
                 BookId = request.BookId,
                 UserId = request.UserId,
                 IssueDate = DateTime.Now,
-                DueDate = request.ReturnDate
+                DueDate = request.ReturnDate,
+                IsReturned = false
             };
 
             _bookIssueRepository.AddBookIssue(bookIssue);
-            // রিকোয়েস্ট ডিলিট করা
             _bookIssueRequestRepository.DeleteRequest(requestId);
 
             return RedirectToAction("ReviewRequests");
@@ -68,10 +68,62 @@ namespace BookNest.Controllers
             _bookIssueRequestRepository.DeleteRequest(requestId);
 
             var book = _bookRepository.GetBookById(request.BookId);
-            book.Quantity += 1; // পরিমাণ পুনরুদ্ধার করা
+            book.Quantity += 1;
             _bookRepository.UpdateBook(book);
 
             return RedirectToAction("ReviewRequests");
+        }
+
+        public IActionResult UserIssues()
+        {
+            var userIssues = _userRepository.GetAllUsers()
+                .Select(u => new UserIssueViewModel
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName,
+                    BookIssues = _bookIssueRepository.GetAllBookIssues()
+                        .Where(bi => bi.UserId == u.Id && !bi.IsReturned)
+                        .Select(bi => new BookIssueViewModel
+                        {
+                            BookTitle = bi.Book.Title,
+                            IssueDate = bi.IssueDate,
+                            DueDate = bi.DueDate,
+                            IsExpired = bi.DueDate < DateTime.Now && !bi.IsReturned
+                        }).ToList(),
+                    IsRestricted = u.IsRestricted
+                }).ToList();
+
+            return View(userIssues);
+        }
+
+        [HttpPost]
+        public IActionResult RestrictUser(string userId)
+        {
+            var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return BadRequest("User does not exist.");
+            }
+
+            user.IsRestricted = true;
+            _userRepository.UpdateUser(user);
+
+            return RedirectToAction("UserIssues");
+        }
+
+        [HttpPost]
+        public IActionResult UnrestrictUser(string userId)
+        {
+            var user = _userRepository.GetAllUsers().FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return BadRequest("User does not exist.");
+            }
+
+            user.IsRestricted = false;
+            _userRepository.UpdateUser(user);
+
+            return RedirectToAction("UserIssues");
         }
     }
 }

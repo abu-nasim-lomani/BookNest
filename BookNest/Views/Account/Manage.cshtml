@@ -1,0 +1,16 @@
+﻿@model User
+
+<h2>Manage Account</h2>
+<div>
+    <h4>@Model.UserName</h4>
+    @if (Model.IsRestricted)
+    {
+        <div class="alert alert-danger">
+            You are restricted. Please return your overdue books.
+        </div>
+    }
+    else
+    {
+        <!-- অন্যান্য অ্যাকাউন্ট সেটিংস এখানে প্রদর্শন করুন -->
+    }
+</div>
