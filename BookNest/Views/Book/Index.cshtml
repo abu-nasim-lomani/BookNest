@@ -21,31 +21,41 @@
                     <td>@book.Author</td>
                     <td>@book.Quantity</td>
                     <td>
-                        @if (book.Quantity > 0)
+                        @if (ViewBag.IsAdmin)
 
                         {
-                            <form asp-action="RequestIssue" method="post">
-                                <input type="hidden" name="bookId" value="@book.Id" />
-                                <div class="form-row align-items-center">
-                                    <div class="col-auto">
-                                        <label class="sr-only" for="returnDate">Return Date:</label>
-                                        <input type="date" class="form-control mb-2" name="returnDate" required />
-                                    </div>
-                                    <div class="col-auto">
-                                        <label class="sr-only" for="returnTime">Return Time:</label>
-                                        <input type="time" class="form-control mb-2" name="returnTime" required />
-                                    </div>
-                                    <div class="col-auto">
-                                        <button type="submit" class="btn btn-primary mb-2">Request Issue</button>
-                                    </div>
-                                </div>
-                            </form>
+                            <!-- অ্যাডমিনের জন্য আপডেট এবং মুছে ফেলার অপশন -->
+                            <button type="button" class="btn btn-primary" onclick="confirmUpdate(@book.Id, '@book.Title', '@book.Author', @book.Quantity)">Update</button>
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete(@book.Id)">Delete</button>
                         }
 
                         else
 
                         {
-                            <button class="btn btn-secondary" disabled>Out of Stock</button>
+                            <!-- সাধারণ ব্যবহারকারীর জন্য বই ইস্যু বা স্টক আউট চেক -->
+                            @if (book.Quantity > 0)
+                            {
+                                <form asp-action="RequestIssue" method="post">
+                                    <input type="hidden" name="bookId" value="@book.Id" />
+                                    <div class="form-row align-items-center">
+                                        <div class="col-auto">
+                                            <label class="sr-only" for="returnDate">Return Date:</label>
+                                            <input type="date" class="form-control mb-2" name="returnDate" required />
+                                        </div>
+                                        <div class="col-auto">
+                                            <label class="sr-only" for="returnTime">Return Time:</label>
+                                            <input type="time" class="form-control mb-2" name="returnTime" required />
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-primary mb-2">Request Issue</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary" disabled>Out of Stock</button>
+                            }
                         }
                     </td>
                 </tr>
@@ -53,3 +63,78 @@
         </tbody>
     </table>
 </div>
+
+<!-- Update Confirmation Modal -->
+<div class="modal fade" id="updateConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="updateConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateConfirmationModalLabel">Update Book</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="updateForm" asp-action="UpdateBook" method="post">
+                    <input type="hidden" name="Id" id="updateBookId" />
+                    <div class="form-group">
+                        <label for="updateTitle">Title</label>
+                        <input type="text" class="form-control" name="Title" id="updateTitle" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="updateAuthor">Author</label>
+                        <input type="text" class="form-control" name="Author" id="updateAuthor" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="updateQuantity">Quantity</label>
+                        <input type="number" class="form-control" name="Quantity" id="updateQuantity" required min="1" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Delete Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this book?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <form id="deleteForm" asp-action="DeleteBook" method="post" style="display:inline;">
+                    <input type="hidden" name="bookId" id="deleteBookId" />
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        function confirmUpdate(bookId, title, author, quantity) {
+            $('#updateBookId').val(bookId);
+            $('#updateTitle').val(title);
+            $('#updateAuthor').val(author);
+            $('#updateQuantity').val(quantity);
+            $('#updateConfirmationModal').modal('show');
+        }
+
+        function confirmDelete(bookId) {
+            $('#deleteBookId').val(bookId);
+            $('#deleteConfirmationModal').modal('show');
+        }
+    </script>
+}
