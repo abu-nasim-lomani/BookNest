@@ -1,44 +1,37 @@
 ﻿@model IEnumerable<BookNest.Models.BookIssue>
 
-<h2>Book Issues</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Book Title</th>
-            <th>User Name</th>
-            <th>Issue Date</th>
-            <th>Due Date</th>
-            <th>Return Date</th>
-            <th>Is Returned</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var issue in Model)
-
-        {
+<div class="container mt-5">
+    <h2>Book Issues</h2>
+    <table class="table table-striped">
+        <thead class="thead-dark">
             <tr>
-                <td>@issue.Book.Title</td>
-                <td>@issue.User.UserName</td>
-                <td>@issue.IssueDate.ToShortDateString()</td>
-                <td>@issue.DueDate.ToShortDateString()</td>
-                <td>@(issue.ReturnDate.HasValue ? issue.ReturnDate.Value.ToShortDateString() : "Not Returned")</td>
-                <td>@issue.IsReturned</td>
-                <td>
-                    @if (!issue.IsReturned)
-                    {
-                        <form asp-action="ReturnBook" method="post">
-                            <input type="hidden" name="bookIssueId" value="@issue.Id" />
-                            <button type="submit" class="btn btn-primary">Return</button>
-                        </form>
-                    }
-                </td>
+                <th>Book Title</th>
+                <th>Issue Date</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var issue in Model)
+            {
+                <tr>
+                    <td>@issue.Book.Title</td>
+                    <td>@issue.IssueDate.ToShortDateString()</td>
+                    <td>@issue.DueDate.ToShortDateString()</td>
+                    <td>@(issue.ReturnDate.HasValue ? issue.ReturnDate.Value.ToShortDateString() : "Not Returned")</td>
+                    <td>
+                        @if (!issue.IsReturned)
 
-<form asp-action="CheckRestrictions" method="post">
-    <button type="submit" class="btn btn-warning">Check Restrictions</button>
-</form>
+                        {
+                            <form asp-action="ReturnBook" method="post">
+                                <input type="hidden" name="bookIssueId" value="@issue.Id" />
+                                <button type="submit" class="btn btn-primary">Return</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

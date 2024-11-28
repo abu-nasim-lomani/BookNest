@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<BookNest.Models.Book>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
 
 <div class="container mt-5">
     <h2 class="mb-4">Book List</h2>
@@ -7,7 +9,7 @@
             <tr>
                 <th>Title</th>
                 <th>Author</th>
-                <th>Is Available</th>
+                <th>Quantity</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -17,9 +19,9 @@
                 <tr>
                     <td>@book.Title</td>
                     <td>@book.Author</td>
-                    <td>@(book.IsAvailable ? "Yes" : "No")</td>
+                    <td>@book.Quantity</td>
                     <td>
-                        @if (book.IsAvailable)
+                        @if (book.Quantity > 0)
 
                         {
                             <form asp-action="RequestIssue" method="post">
@@ -43,7 +45,7 @@
                         else
 
                         {
-                            <button class="btn btn-secondary" disabled>Pending</button>
+                            <button class="btn btn-secondary" disabled>Out of Stock</button>
                         }
                     </td>
                 </tr>

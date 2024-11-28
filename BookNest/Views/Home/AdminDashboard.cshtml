@@ -38,18 +38,23 @@
     </tbody>
 </table>
 
-<h3>Add/Modify Books</h3>
-<form asp-action="AddBook" method="post">
+<h3 class="mt-5 mb-3">Add/Modify Books</h3>
+<form asp-action="AddBook" method="post" class="mb-4">
     <div class="form-group">
         <label for="Title">Title</label>
-        <input type="text" class="form-control" id="Title" name="Title" required>
+        <input type="text" class="form-control" id="Title" name="Title" required />
     </div>
     <div class="form-group">
         <label for="Author">Author</label>
-        <input type="text" class="form-control" id="Author" name="Author" required>
+        <input type="text" class="form-control" id="Author" name="Author" required />
+    </div>
+    <div class="form-group">
+        <label for="Quantity">Quantity</label>
+        <input type="number" class="form-control" id="Quantity" name="Quantity" required min="1" />
     </div>
     <button type="submit" class="btn btn-primary">Add Book</button>
 </form>
+
 
 <h3>Books</h3>
 <table class="table">

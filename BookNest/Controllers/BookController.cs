@@ -26,7 +26,7 @@ namespace BookNest.Controllers
             return View(books);
         }
 
-        [HttpPost("Book/RequestIssue")]
+        [HttpPost]
         public IActionResult RequestIssue(int bookId, DateTime returnDate, string returnTime)
         {
             var book = _bookRepository.GetBookById(bookId);
@@ -53,6 +53,10 @@ namespace BookNest.Controllers
             };
 
             _bookIssueRequestRepository.AddRequest(request);
+
+            // বইটির পেন্ডিং ইউজার আপডেট করা
+            book.PendingUserId = userId;
+            _bookRepository.UpdateBook(book);
 
             return RedirectToAction("Index");
         }

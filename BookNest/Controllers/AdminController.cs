@@ -28,6 +28,7 @@ namespace BookNest.Controllers
             return View(requests);
         }
 
+
         [HttpPost]
         public IActionResult ApproveRequest(int requestId)
         {
@@ -57,13 +58,17 @@ namespace BookNest.Controllers
             _bookIssueRepository.AddBookIssue(bookIssue);
 
             var book = _bookRepository.GetBookById(request.BookId);
-            book.IsAvailable = false;
+            book.Quantity -= 1; // পরিমাণ হ্রাস করা
+            book.PendingUserId = null; // পেন্ডিং ইউজার সাফ করা
             _bookRepository.UpdateBook(book);
 
             _bookIssueRequestRepository.DeleteRequest(requestId); // অনুরোধ মুছে ফেলা
 
             return RedirectToAction("ReviewRequests");
         }
+
+
+
 
         [HttpPost]
         public IActionResult DeclineRequest(int requestId)

@@ -70,6 +70,7 @@ namespace BookNest.Controllers
             return RedirectToAction("AdminDashboard");
         }
 
+
         public IActionResult BookList(string searchTerm)
         {
             var books = string.IsNullOrEmpty(searchTerm) ? _bookRepository.GetAllBooks() : _bookRepository.SearchBooks(searchTerm);
