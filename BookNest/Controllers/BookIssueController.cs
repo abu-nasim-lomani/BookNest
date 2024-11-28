@@ -1,94 +1,96 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BookNest.Models;
-using BookNest.Services;
+﻿using BookNest.Models;
+using BookNest.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
 
 namespace BookNest.Controllers
 {
+    [Authorize]
     public class BookIssueController : Controller
     {
-        private readonly BookIssueService _bookIssueService;
+        private readonly IBookIssueRepository _bookIssueRepository;
+        private readonly IBookRepository _bookRepository;
+        private readonly IUserRepository _userRepository;
 
-        public BookIssueController(BookIssueService bookIssueService)
+        public BookIssueController(IBookIssueRepository bookIssueRepository, IBookRepository bookRepository, IUserRepository userRepository)
         {
-            _bookIssueService = bookIssueService;
+            _bookIssueRepository = bookIssueRepository;
+            _bookRepository = bookRepository;
+            _userRepository = userRepository;
         }
 
         public IActionResult Index()
         {
-            var bookIssues = _bookIssueService.GetAllBookIssues();
+            var bookIssues = _bookIssueRepository.GetAllBookIssues();
             return View(bookIssues);
         }
 
-        public IActionResult Details(int id)
+        [HttpPost]
+        public IActionResult IssueBook(int bookId, string userId)
         {
-            var bookIssue = _bookIssueService.GetBookIssueById(id);
-            if (bookIssue == null)
+            var book = _bookRepository.GetBookById(bookId);
+            if (book == null || !book.IsAvailable)
             {
-                return NotFound();
+                return BadRequest("Book not available or does not exist.");
             }
-            return View(bookIssue);
-        }
 
-        public IActionResult Create()
-        {
-            return View();
+            var user = _userRepository.GetUserById(userId);
+            if (user == null)
+            {
+                return BadRequest("User does not exist.");
+            }
+
+            var bookIssue = new BookIssue
+            {
+                BookId = bookId,
+                UserId = userId,
+                IssueDate = DateTime.Now,
+                DueDate = DateTime.Now.AddDays(14) // নির্দিষ্ট সময়ের মধ্যে (১৪ দিন)
+            };
+
+            _bookIssueRepository.AddBookIssue(bookIssue);
+            book.IsAvailable = false;
+            _bookRepository.UpdateBook(book);
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(BookIssue bookIssue)
+        public IActionResult ReturnBook(int bookIssueId)
         {
-            if (ModelState.IsValid)
-            {
-                _bookIssueService.AddBookIssue(bookIssue);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(bookIssue);
-        }
-
-        public IActionResult Edit(int id)
-        {
-            var bookIssue = _bookIssueService.GetBookIssueById(id);
+            var bookIssue = _bookIssueRepository.GetBookIssueById(bookIssueId);
             if (bookIssue == null)
             {
-                return NotFound();
+                return BadRequest("Book Issue does not exist.");
             }
-            return View(bookIssue);
+
+            bookIssue.ReturnDate = DateTime.Now;
+            _bookIssueRepository.UpdateBookIssue(bookIssue);
+
+            var book = _bookRepository.GetBookById(bookIssue.BookId);
+            book.IsAvailable = true;
+            _bookRepository.UpdateBook(book);
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, BookIssue bookIssue)
+        public IActionResult CheckRestrictions()
         {
-            if (id != bookIssue.Id)
+            var overdueIssues = _bookIssueRepository.GetAllBookIssues().Where(bi => bi.DueDate < DateTime.Now && !bi.IsReturned);
+            foreach (var issue in overdueIssues)
             {
-                return NotFound();
+                var user = _userRepository.GetUserById(issue.UserId);
+                if (user != null)
+                {
+                    user.IsRestricted = true;
+                    _userRepository.UpdateUser(user);
+                }
             }
 
-            if (ModelState.IsValid)
-            {
-                _bookIssueService.UpdateBookIssue(bookIssue);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(bookIssue);
-        }
-
-        public IActionResult Delete(int id)
-        {
-            var bookIssue = _bookIssueService.GetBookIssueById(id);
-            if (bookIssue == null)
-            {
-                return NotFound();
-            }
-            return View(bookIssue);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            _bookIssueService.DeleteBookIssue(id);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

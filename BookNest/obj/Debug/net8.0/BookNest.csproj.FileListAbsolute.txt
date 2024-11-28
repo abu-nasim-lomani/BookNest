@@ -301,6 +301,7 @@ C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.MvcAp
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.RazorAssemblyInfo.cache
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.RazorAssemblyInfo.cs
+C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.sourcelink.json
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\bin\Debug\net8.0\appsettings.json
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\bin\Debug\net8.0\BookNest.staticwebassets.runtime.json
@@ -585,4 +586,3 @@ C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\refint\BookNes
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.pdb
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.genruntimeconfig.cache
 C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\ref\BookNest.dll
-C:\Users\Shumon\Downloads\BookNest-main\BookNest\obj\Debug\net8.0\BookNest.sourcelink.json

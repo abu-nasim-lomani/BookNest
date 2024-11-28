@@ -1,0 +1,74 @@
+﻿@model IEnumerable<BookNest.Models.BookIssueRequest>
+
+<h2>Review Book Issue Requests</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Book Title</th>
+            <th>User Name</th>
+            <th>Request Date</th>
+            <th>Return Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@request.Book.Title</td>
+                <td>@request.User.UserName</td>
+                <td>@request.RequestDate.ToShortDateString()</td>
+                <td>@request.ReturnDate.ToShortDateString()</td>
+                <td>
+                    <button type="button" class="btn btn-info" onclick="checkUserIssues('@request.UserId')">Check User Issues</button>
+                    <form asp-action="ApproveRequest" method="post" style="display:inline;">
+                        <input type="hidden" name="requestId" value="@request.Id" />
+                        <button type="submit" class="btn btn-success">Approve</button>
+                    </form>
+                    <form asp-action="DeclineRequest" method="post" style="display:inline;">
+                        <input type="hidden" name="requestId" value="@request.Id" />
+                        <button type="submit" class="btn btn-danger">Decline</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="userIssuesModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="userIssuesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userIssuesModalLabel">User's Current Book Issues</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="userIssuesContent">
+                <!-- এখানে ব্যবহারকারীর বই ইস্যুর তালিকা প্রদর্শিত হবে -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+        function checkUserIssues(userId) {
+            $.ajax({
+                url: '@Url.Action("CheckUserIssues", "Admin")',
+                type: 'POST',
+                data: { userId: userId },
+                success: function (data) {
+                    $('#userIssuesContent').html(data);
+                    $('#userIssuesModal').modal('show');
+                }
+            });
+        }
+    </script>
+}

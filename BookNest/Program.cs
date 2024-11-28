@@ -16,6 +16,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IBookIssueRepository, BookIssueRepository>();
+builder.Services.AddScoped<IBookIssueRequestRepository, BookIssueRequestRepository>(); // এই লাইনটি যোগ করুন
 
 builder.Services.AddDefaultIdentity<User>(options =>
 {

@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BookNest.Data;
+﻿using BookNest.Data;
 using BookNest.Models;
 using BookNest.Repositories.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookNest.Repositories
@@ -16,14 +16,20 @@ namespace BookNest.Repositories
             _context = context;
         }
 
-        public BookIssue GetBookIssueById(int issueId)
-        {
-            return _context.BookIssues.Include(bi => bi.Book).Include(bi => bi.User).FirstOrDefault(bi => bi.Id == issueId);
-        }
-
         public IEnumerable<BookIssue> GetAllBookIssues()
         {
-            return _context.BookIssues.Include(bi => bi.Book).Include(bi => bi.User).ToList();
+            return _context.BookIssues
+                .Include(bi => bi.Book)
+                .Include(bi => bi.User)
+                .ToList();
+        }
+
+        public BookIssue GetBookIssueById(int id)
+        {
+            return _context.BookIssues
+                .Include(bi => bi.Book)
+                .Include(bi => bi.User)
+                .FirstOrDefault(bi => bi.Id == id);
         }
 
         public void AddBookIssue(BookIssue bookIssue)
@@ -38,9 +44,9 @@ namespace BookNest.Repositories
             _context.SaveChanges();
         }
 
-        public void DeleteBookIssue(int issueId)
+        public void DeleteBookIssue(int id)
         {
-            var bookIssue = _context.BookIssues.Find(issueId);
+            var bookIssue = _context.BookIssues.Find(id);
             if (bookIssue != null)
             {
                 _context.BookIssues.Remove(bookIssue);

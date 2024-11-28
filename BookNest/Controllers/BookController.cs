@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookNest.Models;
 using BookNest.Repositories.Interfaces;
-using BookNest.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BookNest.Controllers
 {
@@ -9,10 +10,14 @@ namespace BookNest.Controllers
     public class BookController : Controller
     {
         private readonly IBookRepository _bookRepository;
+        private readonly IBookIssueRequestRepository _bookIssueRequestRepository;
+        private readonly IUserRepository _userRepository;
 
-        public BookController(IBookRepository bookRepository)
+        public BookController(IBookRepository bookRepository, IBookIssueRequestRepository bookIssueRequestRepository, IUserRepository userRepository)
         {
             _bookRepository = bookRepository;
+            _bookIssueRequestRepository = bookIssueRequestRepository;
+            _userRepository = userRepository;
         }
 
         public IActionResult Index()
@@ -21,22 +26,35 @@ namespace BookNest.Controllers
             return View(books);
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult AddBook()
+        [HttpPost("Book/RequestIssue")]
+        public IActionResult RequestIssue(int bookId, DateTime returnDate, string returnTime)
         {
-            return View();
-        }
-
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public IActionResult AddBook(Book book)
-        {
-            if (ModelState.IsValid)
+            var book = _bookRepository.GetBookById(bookId);
+            if (book == null || !book.IsAvailable)
             {
-                _bookRepository.AddBook(book);
-                return RedirectToAction("Index");
+                return BadRequest("Book not available or does not exist.");
             }
-            return View(book);
+
+            var userId = _userRepository.GetAllUsers().FirstOrDefault(u => u.UserName == User.Identity.Name)?.Id;
+            if (userId == null)
+            {
+                return BadRequest("User does not exist.");
+            }
+
+            var returnDateTime = returnDate.Add(TimeSpan.Parse(returnTime));
+
+            var request = new BookIssueRequest
+            {
+                BookId = bookId,
+                UserId = userId,
+                RequestDate = DateTime.Now,
+                ReturnDate = returnDateTime,
+                IsApproved = false
+            };
+
+            _bookIssueRequestRepository.AddRequest(request);
+
+            return RedirectToAction("Index");
         }
     }
 }

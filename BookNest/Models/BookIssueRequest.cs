@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BookNest.Models
 {
-    public class BookIssue
+    public class BookIssueRequest
     {
         [Key]
         public int Id { get; set; }
@@ -17,15 +17,11 @@ namespace BookNest.Models
         public User User { get; set; }
 
         [Required]
-        public DateTime IssueDate { get; set; }
+        public DateTime RequestDate { get; set; }
 
-        public DateTime? ReturnDate { get; set; }
+        [Required]
+        public DateTime ReturnDate { get; set; }
 
-        public bool IsReturned
-        {
-            get { return ReturnDate.HasValue; }
-        }
-
-        public DateTime DueDate { get; set; } // নতুন প্রপার্টি
+        public bool IsApproved { get; set; }
     }
 }

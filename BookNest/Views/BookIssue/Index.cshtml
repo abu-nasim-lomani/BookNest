@@ -6,30 +6,39 @@
     <thead>
         <tr>
             <th>Book Title</th>
-            <th>User Email</th>
+            <th>User Name</th>
             <th>Issue Date</th>
+            <th>Due Date</th>
             <th>Return Date</th>
             <th>Is Returned</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var bookIssue in Model)
+        @foreach (var issue in Model)
+
         {
             <tr>
-                <td>@bookIssue.Book.Title</td>
-                <td>@bookIssue.User.Email</td>
-                <td>@bookIssue.IssueDate.ToShortDateString()</td>
-                <td>@bookIssue.ReturnDate.ToShortDateString()</td>
-                <td>@bookIssue.IsReturned</td>
+                <td>@issue.Book.Title</td>
+                <td>@issue.User.UserName</td>
+                <td>@issue.IssueDate.ToShortDateString()</td>
+                <td>@issue.DueDate.ToShortDateString()</td>
+                <td>@(issue.ReturnDate.HasValue ? issue.ReturnDate.Value.ToShortDateString() : "Not Returned")</td>
+                <td>@issue.IsReturned</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@bookIssue.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@bookIssue.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@bookIssue.Id">Delete</a>
+                    @if (!issue.IsReturned)
+                    {
+                        <form asp-action="ReturnBook" method="post">
+                            <input type="hidden" name="bookIssueId" value="@issue.Id" />
+                            <button type="submit" class="btn btn-primary">Return</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<a asp-action="Create">Issue New Book</a>
+<form asp-action="CheckRestrictions" method="post">
+    <button type="submit" class="btn btn-warning">Check Restrictions</button>
+</form>

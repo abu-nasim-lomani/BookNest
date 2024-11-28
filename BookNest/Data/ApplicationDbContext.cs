@@ -14,6 +14,9 @@ namespace BookNest.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<BookIssue> BookIssues { get; set; }
 
+        public DbSet<BookIssueRequest> BookIssueRequests { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

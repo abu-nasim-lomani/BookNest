@@ -1,21 +1,53 @@
 ﻿@model IEnumerable<BookNest.Models.Book>
 
-<h2>Books</h2>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Author</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var book in Model)
-        {
+<div class="container mt-5">
+    <h2 class="mb-4">Book List</h2>
+    <table class="table table-striped">
+        <thead class="thead-dark">
             <tr>
-                <td>@book.Title</td>
-                <td>@book.Author</td>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Is Available</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var book in Model)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@(book.IsAvailable ? "Yes" : "No")</td>
+                    <td>
+                        @if (book.IsAvailable)
+
+                        {
+                            <form asp-action="RequestIssue" method="post">
+                                <input type="hidden" name="bookId" value="@book.Id" />
+                                <div class="form-row align-items-center">
+                                    <div class="col-auto">
+                                        <label class="sr-only" for="returnDate">Return Date:</label>
+                                        <input type="date" class="form-control mb-2" name="returnDate" required />
+                                    </div>
+                                    <div class="col-auto">
+                                        <label class="sr-only" for="returnTime">Return Time:</label>
+                                        <input type="time" class="form-control mb-2" name="returnTime" required />
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary mb-2">Request Issue</button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+
+                        else
+
+                        {
+                            <button class="btn btn-secondary" disabled>Pending</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

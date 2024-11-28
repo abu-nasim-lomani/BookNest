@@ -57,6 +57,8 @@
         <tr>
             <th>Title</th>
             <th>Author</th>
+            <th>Is Available</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -66,7 +68,23 @@
             <tr>
                 <td>@book.Title</td>
                 <td>@book.Author</td>
+                <td>@book.IsAvailable</td>
+                <td>
+                    @if (book.IsAvailable)
+                    {
+                        <form asp-action="IssueBook" method="post">
+                            <input type="hidden" name="bookId" value="@book.Id" />
+                            <input type="date" name="returnDate" required />
+                            <button type="submit" class="btn btn-primary">Issue Book</button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+<h3>Check Restrictions</h3>
+<form asp-action="CheckRestrictions" method="post">
+    <button type="submit" class="btn btn-warning">Check Restrictions</button>
+</form>
