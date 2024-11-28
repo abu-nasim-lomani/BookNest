@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fLpZN5XhQEM=",
+  "dgSpecHash": "Fi/okWjTevk=",
   "success": true,
-  "projectFilePath": "F:\\CADFlow Manager\\Library\\BookNest\\BookNest\\BookNest.csproj",
+  "projectFilePath": "C:\\Users\\Shumon\\Downloads\\BookNest-main\\BookNest\\BookNest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Shumon\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Shumon\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

@@ -8363,11 +8363,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\CADFlow Manager\\Library\\BookNest\\BookNest\\BookNest.csproj",
+      "projectUniqueName": "C:\\Users\\Shumon\\Downloads\\BookNest-main\\BookNest\\BookNest.csproj",
       "projectName": "BookNest",
-      "projectPath": "F:\\CADFlow Manager\\Library\\BookNest\\BookNest\\BookNest.csproj",
+      "projectPath": "C:\\Users\\Shumon\\Downloads\\BookNest-main\\BookNest\\BookNest.csproj",
       "packagesPath": "C:\\Users\\Shumon\\.nuget\\packages\\",
-      "outputPath": "F:\\CADFlow Manager\\Library\\BookNest\\BookNest\\obj\\",
+      "outputPath": "C:\\Users\\Shumon\\Downloads\\BookNest-main\\BookNest\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Shumon\\AppData\\Roaming\\NuGet\\NuGet.Config",

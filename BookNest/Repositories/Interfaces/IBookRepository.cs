@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using BookNest.Models;
+﻿using BookNest.Models;
+using System.Collections.Generic;
 
 namespace BookNest.Repositories.Interfaces
 {
     public interface IBookRepository
     {
-        Book GetBookById(int bookId);
         IEnumerable<Book> GetAllBooks();
+        Book GetBookById(int id);
         void AddBook(Book book);
         void UpdateBook(Book book);
-        void DeleteBook(int bookId);
+        void DeleteBook(int id);
+        IEnumerable<Book> SearchBooks(string searchTerm);
     }
 }

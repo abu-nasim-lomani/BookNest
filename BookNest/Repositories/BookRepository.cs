@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BookNest.Data;
+﻿using BookNest.Data;
 using BookNest.Models;
 using BookNest.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BookNest.Repositories
 {
@@ -16,14 +15,14 @@ namespace BookNest.Repositories
             _context = context;
         }
 
-        public Book GetBookById(int bookId)
-        {
-            return _context.Books.Include(b => b.BookIssues).FirstOrDefault(b => b.Id == bookId);
-        }
-
         public IEnumerable<Book> GetAllBooks()
         {
-            return _context.Books.Include(b => b.BookIssues).ToList();
+            return _context.Books.ToList();
+        }
+
+        public Book GetBookById(int id)
+        {
+            return _context.Books.Find(id);
         }
 
         public void AddBook(Book book)
@@ -38,14 +37,21 @@ namespace BookNest.Repositories
             _context.SaveChanges();
         }
 
-        public void DeleteBook(int bookId)
+        public void DeleteBook(int id)
         {
-            var book = _context.Books.Find(bookId);
+            var book = _context.Books.Find(id);
             if (book != null)
             {
                 _context.Books.Remove(book);
                 _context.SaveChanges();
             }
+        }
+
+        public IEnumerable<Book> SearchBooks(string searchTerm)
+        {
+            return _context.Books
+                .Where(b => b.Title.Contains(searchTerm) || b.Author.Contains(searchTerm))
+                .ToList();
         }
     }
 }

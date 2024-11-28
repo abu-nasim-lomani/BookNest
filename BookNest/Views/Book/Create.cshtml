@@ -1,6 +1,6 @@
 ﻿@model BookNest.Models.Book
 
-<h2>Add New Book</h2>
+<h2>Create Book</h2>
 
 <form asp-action="Create">
     <div class="form-group">
@@ -22,13 +22,3 @@
         <input type="submit" value="Create" class="btn btn-primary" />
     </div>
 </form>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

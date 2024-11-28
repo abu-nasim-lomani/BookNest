@@ -1,9 +1,12 @@
 using BookNest.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using BookNest.Repositories.Interfaces;
 using BookNest.ViewModels;
+using System.Linq;
+using System;
 
 namespace BookNest.Controllers
 {
@@ -49,10 +52,28 @@ namespace BookNest.Controllers
         {
             if (ModelState.IsValid)
             {
-                _bookRepository.AddBook(book);
-                return RedirectToAction("AdminDashboard");
+                try
+                {
+                    _bookRepository.AddBook(book);
+                    TempData["SuccessMessage"] = "Book added successfully!";
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                }
             }
-            return View("AdminDashboard", book);
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                TempData["ErrorMessage"] = "Failed to add book. Errors: " + string.Join(", ", errors);
+            }
+            return RedirectToAction("AdminDashboard");
+        }
+
+        public IActionResult BookList(string searchTerm)
+        {
+            var books = string.IsNullOrEmpty(searchTerm) ? _bookRepository.GetAllBooks() : _bookRepository.SearchBooks(searchTerm);
+            return View(books);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

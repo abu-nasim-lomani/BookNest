@@ -1,6 +1,22 @@
 ﻿@model BookNest.ViewModels.AdminDashboardViewModel
 
-<h1>Admin Dashboard</h1>
+<h2>Admin Dashboard</h2>
+
+@if (TempData["SuccessMessage"] != null)
+
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
 
 <h3>Users</h3>
 <table class="table">
@@ -12,6 +28,7 @@
     </thead>
     <tbody>
         @foreach (var user in Model.Users)
+
         {
             <tr>
                 <td>@user.UserName</td>
@@ -25,11 +42,11 @@
 <form asp-action="AddBook" method="post">
     <div class="form-group">
         <label for="Title">Title</label>
-        <input type="text" class="form-control" id="Title" name="Title">
+        <input type="text" class="form-control" id="Title" name="Title" required>
     </div>
     <div class="form-group">
         <label for="Author">Author</label>
-        <input type="text" class="form-control" id="Author" name="Author">
+        <input type="text" class="form-control" id="Author" name="Author" required>
     </div>
     <button type="submit" class="btn btn-primary">Add Book</button>
 </form>
@@ -44,6 +61,7 @@
     </thead>
     <tbody>
         @foreach (var book in Model.Books)
+
         {
             <tr>
                 <td>@book.Title</td>
