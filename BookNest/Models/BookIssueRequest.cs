@@ -23,5 +23,6 @@ namespace BookNest.Models
         public DateTime ReturnDate { get; set; }
 
         public bool IsApproved { get; set; }
+        public bool IsPending { get; set; } = true; // পেন্ডিং স্ট্যাটাস
     }
 }

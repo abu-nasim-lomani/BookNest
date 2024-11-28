@@ -28,7 +28,6 @@ namespace BookNest.Controllers
             return View(requests);
         }
 
-
         [HttpPost]
         public IActionResult ApproveRequest(int requestId)
         {
@@ -38,13 +37,8 @@ namespace BookNest.Controllers
                 return BadRequest("Request does not exist.");
             }
 
-            var userIssues = _bookIssueRepository.GetAllBookIssues().Where(bi => bi.UserId == request.UserId && !bi.IsReturned);
-            if (userIssues.Any())
-            {
-                return BadRequest("User has unreturned books.");
-            }
-
             request.IsApproved = true;
+            request.IsPending = false;
             _bookIssueRequestRepository.UpdateRequest(request);
 
             var bookIssue = new BookIssue
@@ -56,19 +50,11 @@ namespace BookNest.Controllers
             };
 
             _bookIssueRepository.AddBookIssue(bookIssue);
-
-            var book = _bookRepository.GetBookById(request.BookId);
-            book.Quantity -= 1; // পরিমাণ হ্রাস করা
-            book.PendingUserId = null; // পেন্ডিং ইউজার সাফ করা
-            _bookRepository.UpdateBook(book);
-
-            _bookIssueRequestRepository.DeleteRequest(requestId); // অনুরোধ মুছে ফেলা
+            // রিকোয়েস্ট ডিলিট করা
+            _bookIssueRequestRepository.DeleteRequest(requestId);
 
             return RedirectToAction("ReviewRequests");
         }
-
-
-
 
         [HttpPost]
         public IActionResult DeclineRequest(int requestId)
@@ -81,14 +67,11 @@ namespace BookNest.Controllers
 
             _bookIssueRequestRepository.DeleteRequest(requestId);
 
-            return RedirectToAction("ReviewRequests");
-        }
+            var book = _bookRepository.GetBookById(request.BookId);
+            book.Quantity += 1; // পরিমাণ পুনরুদ্ধার করা
+            _bookRepository.UpdateBook(book);
 
-        [HttpPost]
-        public IActionResult CheckUserIssues(string userId)
-        {
-            var userIssues = _bookIssueRepository.GetAllBookIssues().Where(bi => bi.UserId == userId && !bi.IsReturned);
-            return PartialView("_UserIssuesPartial", userIssues);
+            return RedirectToAction("ReviewRequests");
         }
     }
 }

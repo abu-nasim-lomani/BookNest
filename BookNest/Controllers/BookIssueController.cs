@@ -37,10 +37,11 @@ namespace BookNest.Controllers
             }
 
             bookIssue.ReturnDate = DateTime.Now;
+            bookIssue.IsReturned = true;
             _bookIssueRepository.UpdateBookIssue(bookIssue);
 
             var book = _bookRepository.GetBookById(bookIssue.BookId);
-            book.Quantity += 1; // পরিমাণ বৃদ্ধি করা
+            book.Quantity += 1; // পরিমাণ পুনরুদ্ধার করা
             _bookRepository.UpdateBook(book);
 
             return RedirectToAction("Index");

@@ -13,13 +13,15 @@ namespace BookNest.Controllers
     {
         private readonly IBookRepository _bookRepository;
         private readonly IBookIssueRequestRepository _bookIssueRequestRepository;
+        private readonly IBookIssueRepository _bookIssueRepository;
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
 
-        public BookController(IBookRepository bookRepository, IBookIssueRequestRepository bookIssueRequestRepository, IUserRepository userRepository, UserManager<User> userManager)
+        public BookController(IBookRepository bookRepository, IBookIssueRequestRepository bookIssueRequestRepository, IBookIssueRepository bookIssueRepository, IUserRepository userRepository, UserManager<User> userManager)
         {
             _bookRepository = bookRepository;
             _bookIssueRequestRepository = bookIssueRequestRepository;
+            _bookIssueRepository = bookIssueRepository;
             _userRepository = userRepository;
             _userManager = userManager;
         }
@@ -61,10 +63,10 @@ namespace BookNest.Controllers
         }
 
         [HttpPost]
-        public IActionResult RequestIssue(int bookId, DateTime returnDate, string returnTime)
+        public IActionResult RequestIssue(int bookId, DateTime returnDate)
         {
             var book = _bookRepository.GetBookById(bookId);
-            if (book == null || !book.IsAvailable)
+            if (book == null || book.Quantity <= 0)
             {
                 return BadRequest("Book not available or does not exist.");
             }
@@ -75,24 +77,26 @@ namespace BookNest.Controllers
                 return BadRequest("User does not exist.");
             }
 
-            var returnDateTime = returnDate.Add(TimeSpan.Parse(returnTime));
+            // চেক করা যে ব্যবহারকারীর কাছে কোনো ইস্যু করা বই আছে কিনা যা ফেরত করা হয়নি
+            var userIssues = _bookIssueRepository.GetAllBookIssues().Where(bi => bi.UserId == userId && !bi.IsReturned);
+            if (userIssues.Any())
+            {
+                return BadRequest("Please return your previous book before issuing a new one.");
+            }
 
             var request = new BookIssueRequest
             {
                 BookId = bookId,
                 UserId = userId,
                 RequestDate = DateTime.Now,
-                ReturnDate = returnDateTime,
-                IsApproved = false
+                ReturnDate = returnDate,
+                IsApproved = false,
+                IsPending = true
             };
 
             _bookIssueRequestRepository.AddRequest(request);
 
-            // বইটির পেন্ডিং ইউজার আপডেট করা
-            book.PendingUserId = userId;
-            _bookRepository.UpdateBook(book);
-
-            return RedirectToAction("Index");
+            return Ok();
         }
     }
 }
